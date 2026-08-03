@@ -10,6 +10,10 @@ import com.umb.taller.domain.Book;
 import com.umb.taller.domain.Loan;
 import com.umb.taller.domain.Student;
 
+/**
+ * Servicio de aplicación encargado de controlar el ciclo de vida de los préstamos.
+ * Coordina la validación del estudiante, del libro y el cambio de estado del préstamo.
+ */
 public class LoanService {
 
     private final LoanRepository loanRepository;
@@ -29,6 +33,9 @@ public class LoanService {
 
     /**
      * Creates a new loan.
+     */
+    /**
+     * Crea un préstamo cuando el estudiante existe, el libro existe y está disponible.
      */
     public void createLoan(
             String studentId,
@@ -72,6 +79,9 @@ public class LoanService {
 
     /**
      * Returns a borrowed book.
+     */
+    /**
+     * Finaliza un préstamo activo asociado a un libro.
      */
     public void returnBook(String bookId) {
 

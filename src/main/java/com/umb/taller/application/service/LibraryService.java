@@ -7,6 +7,10 @@ import com.umb.taller.application.repository.StudentRepository;
 import com.umb.taller.domain.Book;
 import com.umb.taller.domain.Student;
 
+/**
+ * Servicio de aplicación para gestionar libros y estudiantes de la biblioteca.
+ * Actúa como punto de entrada para las operaciones básicas de registro y consulta.
+ */
 public class LibraryService {
 
     private final BookRepository bookRepository;
@@ -21,12 +25,18 @@ public class LibraryService {
 
     }
 
+    /**
+     * Registra un nuevo libro en el sistema.
+     */
     public void registerBook(Book book) {
 
         bookRepository.save(book);
 
     }
 
+    /**
+     * Registra un nuevo estudiante en el sistema.
+     */
     public void registerStudent(Student student) {
 
         studentRepository.save(student);

@@ -5,6 +5,9 @@ import java.util.List;
 
 import com.umb.taller.domain.Loan;
 
+/**
+ * Repositorio en memoria para gestionar los préstamos del sistema.
+ */
 public class LoanRepository implements Repository<Loan> {
 
     private final List<Loan> loans;

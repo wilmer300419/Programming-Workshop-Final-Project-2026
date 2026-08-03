@@ -5,6 +5,9 @@ import java.util.List;
 
 import com.umb.taller.domain.Book;
 
+/**
+ * Repositorio en memoria para gestionar los libros del sistema.
+ */
 public class BookRepository implements Repository<Book> {
 
     private final List<Book> books;

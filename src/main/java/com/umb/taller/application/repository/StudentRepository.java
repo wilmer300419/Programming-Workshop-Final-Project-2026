@@ -5,6 +5,9 @@ import java.util.List;
 
 import com.umb.taller.domain.Student;
 
+/**
+ * Repositorio en memoria para gestionar los estudiantes del sistema.
+ */
 public class StudentRepository implements Repository<Student>{
 
     private final List<Student> students;

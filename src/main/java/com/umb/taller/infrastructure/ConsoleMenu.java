@@ -9,6 +9,10 @@ import com.umb.taller.domain.Book;
 import com.umb.taller.domain.Loan;
 import com.umb.taller.domain.Student;
 
+/**
+ * Menú interactivo en consola para gestionar libros, estudiantes y préstamos.
+ * Sirve como capa de interacción entre el usuario y los servicios de la aplicación.
+ */
 public class ConsoleMenu {
 
     private final LibraryService libraryService;
@@ -28,6 +32,9 @@ public class ConsoleMenu {
 
     }
 
+    /**
+     * Inicia el ciclo de interacción del menú y procesa las opciones seleccionadas por el usuario.
+     */
     public void start() {
 
         int option = -1;
@@ -180,6 +187,9 @@ public class ConsoleMenu {
 
     }
 
+    /**
+     * Solicita los datos de un préstamo y delega la operación al servicio correspondiente.
+     */
     private void borrowBook() {
 
         System.out.println(
@@ -202,6 +212,9 @@ public class ConsoleMenu {
 
     }
 
+    /**
+     * Solicita el identificador del libro que se va a devolver y delega la operación al servicio.
+     */
     private void returnBook() {
 
         System.out.println(
@@ -219,6 +232,9 @@ public class ConsoleMenu {
 
     }
 
+    /**
+     * Recolecta la información de un nuevo libro y la envía al servicio para registrarlo.
+     */
     private void registerBook() {
 
         System.out.println(
@@ -250,6 +266,9 @@ public class ConsoleMenu {
 
     }
 
+    /**
+     * Recolecta la información de un nuevo estudiante y la envía al servicio para registrarlo.
+     */
     private void registerStudent() {
 
         System.out.println(
@@ -281,6 +300,9 @@ public class ConsoleMenu {
 
     }
 
+    /**
+     * Busca un libro por su identificador y muestra la información encontrada.
+     */
     private void searchBook() {
 
         System.out.println(
@@ -350,6 +372,9 @@ public class ConsoleMenu {
 
     }
 
+    /**
+     * Muestra todos los préstamos registrados hasta el momento.
+     */
     private void showLoans() {
 
         System.out.println(

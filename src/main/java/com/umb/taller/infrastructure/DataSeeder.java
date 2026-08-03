@@ -4,6 +4,9 @@ import com.umb.taller.application.service.LibraryService;
 import com.umb.taller.domain.Book;
 import com.umb.taller.domain.Student;
 
+/**
+ * Carga datos iniciales de ejemplo para poner el sistema en un estado usable al arrancar.
+ */
 public class DataSeeder {
 
     private final LibraryService libraryService;
@@ -12,6 +15,9 @@ public class DataSeeder {
         this.libraryService = libraryService;
     }
 
+    /**
+     * Inserta estudiantes y libros base para la demo inicial de la biblioteca.
+     */
     public void loadSampleData() {
 
         libraryService.registerStudent(
