@@ -1,9 +1,16 @@
 plugins {
+    id 'application'
     id 'java'
 }
 
 group = 'com.umb'
 version = '1.0.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
 
 repositories {
     mavenCentral()
@@ -13,6 +20,14 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
 }
 
-test {
+application {
+    mainClass = 'com.umb.taller.Main'
+}
+
+tasks.test {
     useJUnitPlatform()
+}
+
+tasks.named('run') {
+    standardInput = System.in
 }
