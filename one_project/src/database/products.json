@@ -1,0 +1,16 @@
+[
+    {
+        "id": 1,
+        "nombre": "Filtro de aceite",
+        "categoria": "Filtros",
+        "precio": 25000.00,
+        "stock": 15
+    },
+    {
+        "id": 2,
+        "nombre": "Bujía",
+        "categoria": "Encendido",
+        "precio": 18000.00,
+        "stock": 30
+    }
+]
