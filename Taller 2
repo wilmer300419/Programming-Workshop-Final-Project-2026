@@ -1,0 +1,55 @@
+
+def crear_cuadricula(tamano):
+    return [[False for _ in range(tamano)] for _ in range(tamano)]
+def mostrar_cuadricula(cuadricula):
+    for fila in cuadricula:
+        linea = ""
+        for celda in fila:
+            linea += "● " if celda else "○ "
+        print(linea)
+def coordenada_valida(x, y, tamano):
+    return 1 <= x <= tamano and 1 <= y <= tamano
+def pedir_tamano():
+    while True:
+        entrada = input("Ingrese el tamaño de la cuadrícula (mínimo 8x8): ")
+        if entrada.isdigit() and int(entrada) >= 8:
+            return int(entrada)
+        print("Tamaño inválido. Debe ser un número igual o mayor a 8.")
+def pedir_coordenada():
+    entrada = input("Ingrese coordenada X,Y (o 'reiniciar' / 'salir'): ")
+    return entrada.strip()
+def main():
+    tamano = pedir_tamano()
+    cuadricula = crear_cuadricula(tamano)
+    seleccionadas = []  
+    print("\nCuadrícula creada:")
+    mostrar_cuadricula(cuadricula)
+    while True:
+        entrada = pedir_coordenada()
+        if entrada == "salir":
+            print("Programa finalizado.")
+            break
+        if entrada == "reiniciar":
+            cuadricula = crear_cuadricula(tamano)
+            seleccionadas = []
+            print("Cuadrícula reiniciada.")
+            mostrar_cuadricula(cuadricula)
+            continue
+        partes = entrada.split(",")
+        if len(partes) != 2 or not partes[0].strip().isdigit() or not partes[1].strip().isdigit():
+            print("Formato inválido. Use por ejemplo: 3,5")
+            continue
+        x, y = int(partes[0]), int(partes[1])
+        if not coordenada_valida(x, y, tamano):
+            print(f"Coordenada fuera de rango. Las coordenadas válidas son de 1 a {tamano}.")
+            continue
+        if (x, y) in seleccionadas:
+            print(f"La coordenada ({x},{y}) ya fue seleccionada.")
+            continue
+        cuadricula[y - 1][x - 1] = True
+        seleccionadas.append((x, y))
+        print(f"\nCoordenada ({x},{y}) marcada.")
+        mostrar_cuadricula(cuadricula)
+        print("Seleccionadas:", seleccionadas)
+if __name__ == "__main__":
+    main()
