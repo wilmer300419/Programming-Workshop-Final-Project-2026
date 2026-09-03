@@ -56,25 +56,25 @@ Calcula el tamaño del área, crea el Canvas blanco y lo ubica en la ventana.
 `circulos`: diccionario que asocia cada coordenada `(x, y)` con el círculo dibujado.
 `seleccionados`: lista de las coordenadas elegidas por el usuario.
 
-**Bloque 6 — Dibujar la cuadrícula (líneas 18–24)**
+**Bloque 6 — Dibujar la cuadrícula (líneas 18–22)**
 Dos bucles anidados recorren filas y columnas, calculan el centro de cada círculo y lo dibujan transparente. Avala los requerimientos: RF01, RF02 y RF03.
 
-**Bloque 7 — Función `seleccionar` (líneas 26–41)**
+**Bloque 7 — Función `seleccionar` (líneas 24–37)**
 Lee las coordenadas, valida que sean números y que estén en rango, rellena el círculo y actualiza la lista. Avala los requerimientos: RF05, RF06, RF07, RF08 y RF10.
 
-**Bloque 8 — Función `reiniciar` (líneas 43–48)**
+**Bloque 8 — Función `reiniciar` (líneas 40–44)**
 Vuelve todos los círculos transparentes y vacía la lista. Avala el requerimiento RF09.
 
-**Bloque 9 — Campos de entrada (líneas 50–56)**
+**Bloque 9 — Campos de entrada (líneas 47–52)**
 Crea las etiquetas y campos de texto para X e Y. Avala el requerimiento RF04.
 
-**Bloque 10 — Botones (líneas 58–59)**
+**Bloque 10 — Botones (líneas 55–56)**
 Botones que llaman a `seleccionar` y `reiniciar` al pulsarlos.
 
-**Bloque 11 — Etiqueta de resultados (líneas 61–62)**
+**Bloque 11 — Etiqueta de resultados (líneas 58–59)**
 Muestra las coordenadas seleccionadas en la parte inferior.
 
-**Bloque 12 — Bucle principal (línea 64)**
+**Bloque 12 — Bucle principal (línea 61)**
 Mantiene la ventana abierta escuchando eventos. Sin esta línea el programa se cerraría al instante.
 
 ## Requerimientos funcionales cubiertos
