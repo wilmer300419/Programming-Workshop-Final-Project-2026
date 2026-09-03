@@ -40,8 +40,8 @@ def seleccionar():
 def reiniciar():
     for id_circulo in circulos.values():
         lienzo.itemconfig(id_circulo, fill="")
-seleccionados.clear()
-etiqueta.config(text="Seleccionadas:[]")
+    seleccionados.clear()
+    etiqueta.config(text="Seleccionadas:[]")
 
 
 tk.Label(ventana, text="X:").grid(row=1, column=0)
@@ -53,9 +53,9 @@ entrada_y.grid(row=2, column=1)
 
 
 tk.Button(ventana, text= "Seleccionar", command= seleccionar).grid(row=1, column=2)
-tk.Button(ventana, text= "Reiniciar", command=reiniciar).grid(row=2, colum=2)
+tk.Button(ventana, text= "Reiniciar", command=reiniciar).grid(row=2, column=2)
 
 etiqueta = tk.Label(ventana, text= "Seleccionadas:[]")
-etiqueta.grid(row=3, column=0, columspan=3)
+etiqueta.grid(row=3, column=0, columnspan=3)
 
 ventana.mainloop()
