@@ -12,12 +12,14 @@ from src.services.product_service import (
 from src.utils.response import success_response
 
 
+# Agrupa las rutas de productos bajo el prefijo /products.
 router = APIRouter(
     prefix="/products",
     tags=["Products"]
 )
 
 
+# Consulta todos los productos registrados.
 @router.get(
     "/",
     status_code=status.HTTP_200_OK,
@@ -33,6 +35,7 @@ def get_products():
     )
 
 
+# Consulta un producto por su identificador.
 @router.get(
     "/{product_id}",
     status_code=status.HTTP_200_OK,
@@ -48,6 +51,7 @@ def get_product(product_id: int):
     )
 
 
+# Registra un nuevo producto.
 @router.post(
     "/",
     status_code=status.HTTP_201_CREATED,
@@ -63,6 +67,7 @@ def create_new_product(product: ProductCreate):
     )
 
 
+# Actualiza un producto existente.
 @router.put(
     "/{product_id}",
     status_code=status.HTTP_200_OK,
@@ -84,6 +89,7 @@ def update_existing_product(
     )
 
 
+# Elimina un producto por su identificador.
 @router.delete(
     "/{product_id}",
     status_code=status.HTTP_200_OK,
