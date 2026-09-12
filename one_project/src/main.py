@@ -27,110 +27,175 @@ app = FastAPI(
 
 
 # ============================================================
-# MIDDLEWARE DE LOGGING Y MÉTRICAS
+# MIDDLEWARE DE LOGGING
 # ============================================================
 
 @app.middleware("http")
-async def logging_middleware(request: Request, call_next):
+async def logging_middleware(
+    request: Request,
+    call_next
+):
     """
-    Middleware que se ejecuta automáticamente
-    en cada solicitud HTTP.
+    Middleware encargado de registrar las solicitudes
+    y medir el tiempo de respuesta.
 
-    Sus responsabilidades principales son:
+    IMPORTANTE:
 
-    1. Registrar la solicitud en los logs.
-    2. Medir el tiempo de respuesta.
-    3. Registrar el código HTTP obtenido.
-    4. Actualizar las métricas de la aplicación.
-    5. Capturar errores internos inesperados.
+    Las métricas NO se almacenan en memoria.
+
+    El archivo app.log es la fuente de verdad.
+
+    El middleware únicamente registra las solicitudes
+    en el sistema de logging.
+
+    Metrics posteriormente lee:
+
+        app.log
+        app.log.1
+        app.log.2
+        app.log.3
+
+    y calcula las métricas.
     """
+
+    # ========================================================
+    # EXCLUIR /metrics
+    # ========================================================
+
+    # No registramos /metrics para evitar que la consulta
+    # de las métricas se contabilice a sí misma.
+    if request.url.path == "/metrics":
+
+        return await call_next(request)
+
+
+    # ========================================================
+    # INICIO DEL TIEMPO
+    # ========================================================
 
     # Guarda el momento exacto en el que comienza
     # el procesamiento de la solicitud.
     start_time = time.perf_counter()
 
-    # Registra en el archivo de logs que se recibió
-    # una nueva solicitud.
+
+    # ========================================================
+    # REGISTRO DE LA SOLICITUD
+    # ========================================================
+
+    # Registra que se recibió una nueva solicitud.
     logger.info(
-        f"REQUEST {request.method} {request.url.path} "
+        f"REQUEST "
+        f"{request.method} "
+        f"{request.url.path} "
         f"- Petición recibida"
     )
 
+
     try:
 
+        # ====================================================
+        # EJECUTAR SOLICITUD
+        # ====================================================
+
         # Ejecuta la ruta correspondiente.
+
+        # Ejemplos:
         #
-        # Por ejemplo:
         # GET /products/
         # POST /products/
         # DELETE /products/1
+        #
         response = await call_next(request)
 
+
+        # ====================================================
+        # CALCULAR TIEMPO
+        # ====================================================
+
         # Calcula cuánto tiempo tardó la solicitud.
-        #
-        # perf_counter() devuelve el tiempo en segundos,
-        # por eso se multiplica por 1000 para convertirlo
-        # a milisegundos.
+
+        # perf_counter() devuelve segundos,
+        # por eso multiplicamos por 1000 para obtener
+        # milisegundos.
         response_time = (
             time.perf_counter() - start_time
         ) * 1000
 
-        # Registra automáticamente la solicitud
-        # dentro del sistema de métricas.
-        metrics.register_request(
-            response.status_code,
-            response_time
-        )
 
-        # Si el código HTTP es menor a 400,
-        # la solicitud se considera exitosa.
+        # ====================================================
+        # REGISTRO DE SOLICITUD EXITOSA
+        # ====================================================
+
         if response.status_code < 400:
 
             logger.info(
-                f"SUCCESS {request.method} {request.url.path} "
-                f"- Operación finalizada correctamente "
-                f"(HTTP {response.status_code}) "
-                f"- Tiempo: {response_time:.2f} ms"
+                f"SUCCESS "
+                f"{request.method} "
+                f"{request.url.path} "
+                f"- HTTP {response.status_code} "
+                f"- Tiempo: "
+                f"{response_time:.2f} ms"
             )
+
+
+        # ====================================================
+        # REGISTRO DE SOLICITUD CON ERROR
+        # ====================================================
 
         else:
 
-            # Si el código es 400 o superior,
-            # se registra como error.
             logger.error(
-                f"ERROR {request.method} {request.url.path} "
-                f"- Operación finalizada con error "
-                f"(HTTP {response.status_code}) "
-                f"- Tiempo: {response_time:.2f} ms"
+                f"ERROR "
+                f"{request.method} "
+                f"{request.url.path} "
+                f"- HTTP {response.status_code} "
+                f"- Tiempo: "
+                f"{response_time:.2f} ms"
             )
 
-        # Devuelve la respuesta al cliente.
+
+        # ====================================================
+        # DEVOLVER RESPUESTA
+        # ====================================================
+
         return response
+
 
     except Exception as exc:
 
-        # Si ocurre un error inesperado,
-        # también se calcula cuánto tardó la solicitud.
+        # ====================================================
+        # CALCULAR TIEMPO DEL ERROR
+        # ====================================================
+
         response_time = (
             time.perf_counter() - start_time
         ) * 1000
 
-        # Registra el error como un HTTP 500
-        # dentro de las métricas.
-        metrics.register_request(
-            500,
-            response_time
-        )
 
-        # logger.exception() registra el mensaje
-        # junto con la información del error.
+        # ====================================================
+        # REGISTRAR ERROR 500
+        # ====================================================
+
+        # Las métricas NO se actualizan manualmente.
+        #
+        # Metrics leerá este registro desde app.log
+        # y contará el HTTP 500 automáticamente.
+
         logger.exception(
-            f"ERROR {request.method} {request.url.path} "
-            f"- Error inesperado: {str(exc)} "
-            f"- Tiempo: {response_time:.2f} ms"
+            f"ERROR "
+            f"{request.method} "
+            f"{request.url.path} "
+            f"- HTTP 500 "
+            f"- Tiempo: "
+            f"{response_time:.2f} ms "
+            f"- Error: {str(exc)}"
         )
 
-        # Devuelve una respuesta estándar de error interno.
+
+        # ====================================================
+        # RESPUESTA HTTP 500
+        # ====================================================
+
         return JSONResponse(
             status_code=500,
             content={
@@ -151,30 +216,52 @@ async def validation_exception_handler(
     exc: RequestValidationError
 ):
     """
-    Maneja los errores de validación generados por FastAPI
-    y Pydantic.
+    Maneja los errores de validación generados
+    por FastAPI y Pydantic.
 
     Ejemplos:
 
     - Falta un campo obligatorio.
     - Se envía texto en lugar de un número.
-    - El precio es menor o igual a cero.
-    - El stock es negativo.
+    - El precio no cumple las restricciones.
+    - El stock es inválido.
+
+    Los errores de validación generan HTTP 422.
+
+    IMPORTANTE:
+
+    No actualizamos las métricas manualmente.
+
+    El middleware recibe posteriormente la respuesta
+    HTTP 422 y la registra en app.log.
     """
 
-    # Registra que ocurrió un error de validación.
-    metrics.register_validation_error()
+    # ========================================================
+    # REGISTRO DEL ERROR DE VALIDACIÓN
+    # ========================================================
 
-    # Guarda el error en el sistema de logs.
+    # Registramos únicamente información adicional
+    # sobre el error de validación.
+    #
+    # NO colocamos aquí:
+    #
+    # "HTTP 422"
+    #
+    # porque el middleware será quien registre la respuesta
+    # HTTP 422 con el tiempo real.
     logger.error(
-        f"VALIDATION_ERROR {request.method} "
+        f"VALIDATION_ERROR "
+        f"{request.method} "
         f"{request.url.path} "
         f"- Información de la solicitud inválida: "
         f"{exc.errors()}"
     )
 
-    # Devuelve una respuesta personalizada
-    # para los errores de validación.
+
+    # ========================================================
+    # RESPUESTA DE VALIDACIÓN
+    # ========================================================
+
     return JSONResponse(
         status_code=422,
         content={
@@ -193,6 +280,7 @@ async def validation_exception_handler(
 # con los productos.
 #
 # El router ya tiene el prefijo:
+#
 # /products
 app.include_router(product_router)
 
@@ -206,14 +294,18 @@ def root():
     """
     Endpoint utilizado para comprobar que
     la API está funcionando correctamente.
+
+    El middleware se encarga automáticamente
+    de registrar esta solicitud en app.log
+    y calcular su tiempo real de respuesta.
     """
 
-    # Registra la consulta en los logs.
-    logger.info(
-        "SUCCESS GET / - Consulta de estado de la API"
-    )
+    # No registramos manualmente esta solicitud.
+    #
+    # El middleware genera:
+    #
+    # SUCCESS GET / - HTTP 200 - Tiempo: X.XX ms
 
-    # Devuelve el estado de la aplicación.
     return {
         "success": True,
         "message": "API de productos funcionando correctamente"
@@ -230,18 +322,39 @@ def get_metrics():
     Endpoint encargado de consultar las métricas
     actuales de la aplicación.
 
-    Ejemplo:
+    Las métricas son calculadas directamente
+    leyendo los archivos de logs.
 
-    GET /metrics
+    Archivos considerados:
+
+        app.log
+        app.log.1
+        app.log.2
+        app.log.3
+
+    /metrics no se registra para evitar
+    que se contabilice a sí mismo.
     """
 
-    # Obtiene las métricas calculadas
-    # por la clase Metrics.
+    # ========================================================
+    # OBTENER MÉTRICAS DESDE LOS LOGS
+    # ========================================================
+
+    # Metrics lee directamente los archivos:
+    #
+    # app.log
+    # app.log.1
+    # app.log.2
+    # app.log.3
+    #
+    # y calcula nuevamente los valores.
     current_metrics = metrics.get_metrics()
 
-    # Devuelve las métricas utilizando
-    # la misma estructura estándar de respuesta
-    # utilizada por la aplicación.
+
+    # ========================================================
+    # RESPUESTA
+    # ========================================================
+
     return {
         "success": True,
         "message": "Métricas consultadas correctamente",
