@@ -3,14 +3,21 @@
         "id": 1,
         "nombre": "Filtro de aceite",
         "categoria": "Filtros",
-        "precio": 25000.00,
+        "precio": 25000.0,
         "stock": 15
     },
     {
         "id": 2,
         "nombre": "Bujía",
         "categoria": "Encendido",
-        "precio": 18000.00,
+        "precio": 18000.0,
         "stock": 30
+    },
+    {
+        "id": 3,
+        "nombre": "Aceite 25w40",
+        "categoria": "Aceites",
+        "precio": 520000.0,
+        "stock": 10
     }
 ]
